@@ -5,14 +5,14 @@
   vars:
     project_root: "/Users/ilyasd3/wildfire-monitoring"
     lambda_function_name: "WildfireMonitoringFunction"
-    zip_file: "{{ project_root }}/wildfire-monitoring-terraform/artifacts/lambda_function.zip"
+    zip_file: "{{ project_root }}/terraform/artifacts/lambda_function.zip"
     src_folder: "{{ project_root }}/src/"
 
   tasks:
 
     - name: Ensure artifacts directory exists
       file:
-        path: "{{ project_root }}/wildfire-monitoring-terraform/artifacts"
+        path: "{{ project_root }}/terraform/artifacts"
         state: directory
 
     - name: Remove old ZIP file if it exists
