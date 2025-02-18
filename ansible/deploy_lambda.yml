@@ -1,0 +1,37 @@
+---
+- name: Automate AWS Lambda Deployment
+  hosts: localhost
+  connection: local
+  vars:
+    project_root: "/Users/ilyasd3/wildfire-monitoring"
+    lambda_function_name: "WildfireMonitoringFunction"
+    zip_file: "{{ project_root }}/wildfire-monitoring-terraform/artifacts/lambda_function.zip"
+    src_folder: "{{ project_root }}/src/"
+
+  tasks:
+
+    - name: Ensure artifacts directory exists
+      file:
+        path: "{{ project_root }}/wildfire-monitoring-terraform/artifacts"
+        state: directory
+
+    - name: Remove old ZIP file if it exists
+      file:
+        path: "{{ zip_file }}"
+        state: absent
+
+    - name: Create ZIP package for AWS Lambda (only function code)
+      command: zip -r {{ zip_file }} lambda_function.py
+      args:
+        chdir: "{{ src_folder }}"
+
+    - name: Update AWS Lambda function with new code
+      command: >
+        aws lambda update-function-code 
+        --function-name {{ lambda_function_name }} 
+        --zip-file fileb://{{ zip_file }}
+      register: lambda_update
+
+    - name: Display AWS Lambda update response
+      debug:
+        var: lambda_update
