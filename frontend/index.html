@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildfire Alert Subscription</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Title and Fire Emoji -->
+    <h1 class="title">Wildfire Alerts</h1>
+    <h1 class="emoji">🔥</h1>
+    
+    <!-- Subscription Form -->
+    <form id="subscriptionForm">
+        <label for="zipCode">Zip Code:</label>
+        <input type="text" id="zipCode" name="zipCode" placeholder="Enter your zip code" required>
+    
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+    
+        <button type="submit">Subscribe</button>
+        <button type="button" id="resetButton" style="display:none;">Enter Another Response</button>
+    </form>    
+
+    <p id="message"></p>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Stay safe. Learn more about <a href="https://www.readyforwildfire.org" target="_blank">Wildfire Preparedness</a>.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
