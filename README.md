@@ -20,8 +20,7 @@ The **Wildfire Monitoring System** is a cloud-based solution designed to detect 
 
 Below is the architecture of the Wildfire Monitoring System:
 
-<img src="user_initiated_flow.svg" alt="Wildfire Monitoring Architecture" width="800">
-<img src="scheduled_alerts_flow.svg" alt="Wildfire Monitoring Architecture" width="800">
+<img src="architecture_diagram.svg" alt="Wildfire Monitoring Architecture" width="800">
 
 ## 🚀 Deployment Instructions
 
