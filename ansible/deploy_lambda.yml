@@ -6,7 +6,7 @@
     project_root: "/Users/ilyasd3/wildfire-monitoring"
     lambda_function_name: "WildfireMonitoringFunction"
     zip_file: "{{ project_root }}/terraform/artifacts/lambda_function.zip"
-    lambda_folder: "{{ project_root }}/lambda_function"
+    lambda_folder: "{{ project_root }}/lambda_functions"
 
   tasks:
 
@@ -20,8 +20,8 @@
         path: "{{ zip_file }}"
         state: absent
 
-    - name: Create ZIP package directly from lambda_function.py
-      command: zip -j {{ zip_file }} {{ lambda_folder }}/lambda_function.py
+    - name: Create ZIP package directly from lambda_wildfire_monitoring.py
+      command: zip -j {{ zip_file }} {{ lambda_folder }}/lambda_wildfire_monitoring.py
 
     - name: Update AWS Lambda function with new code
       command: >
