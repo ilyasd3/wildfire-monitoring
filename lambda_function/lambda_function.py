@@ -17,11 +17,11 @@ BUCKET_NAME = os.environ['BUCKET_NAME']
 SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 PARAMETER_NAME_NASA = os.environ['NASA_API_PARAMETER_NAME']
 PARAMETER_NAME_OPENCAGE = os.environ['OPENCAGE_API_PARAMETER_NAME']
-FRP_THRESHOLD = 50  # Minimum Fire Radiative Power (FRP) to trigger alerts
-DYNAMO_TABLE_NAME = os.environ['DYNAMO_TABLE_NAME']  # DynamoDB table name
+FRP_THRESHOLD = 9  # Minimum Fire Radiative Power (FRP) to trigger alerts
+DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']  # DynamoDB table name
 
 # DynamoDB Table
-subscription_table = dynamodb.Table(DYNAMO_TABLE_NAME)
+subscription_table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 
 def get_nasa_api_key():
     response = ssm.get_parameter(Name=PARAMETER_NAME_NASA, WithDecryption=True)
@@ -88,7 +88,7 @@ def cluster_and_alert_fires(nearby_fires, user_email):
             sns.publish(TopicArn=SNS_TOPIC_ARN, Message=message, Subject="Clustered Wildfire Alert")
             print(f"Clustered Alert sent: {message}")
 
-def fetch_and_process_data(user_lat, user_lon, user_email):
+def fetch_and_process_data(user_lat, user_lon, user_email, zip_code):
     api_key = get_nasa_api_key()
     api_url = f'https://firms.modaps.eosdis.nasa.gov/api/country/csv/{api_key}/MODIS_NRT/USA/1'
     response = requests.get(api_url)
@@ -115,6 +115,10 @@ def fetch_and_process_data(user_lat, user_lon, user_email):
     ]
 
     if not nearby_fires.empty:
+        file_name = f'wildfire_data_{zip_code}.csv'
+        s3_key = f"{user_email}/{zip_code}/{file_name}"
+        s3.put_object(Bucket=BUCKET_NAME, Key=s3_key, Body=nearby_fires.to_csv(index=False))
+        print(f"Filtered data uploaded to S3: {s3_key}")
         cluster_and_alert_fires(nearby_fires, user_email)
 
 def lambda_handler(event, context):
@@ -127,7 +131,7 @@ def lambda_handler(event, context):
             email = subscription['email']
             user_lat, user_lon = get_coordinates_from_zip(zip_code)
             if user_lat and user_lon:
-                fetch_and_process_data(user_lat, user_lon, email)
+                fetch_and_process_data(user_lat, user_lon, email, zip_code)
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},
