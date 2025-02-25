@@ -20,8 +20,8 @@
         path: "{{ zip_file }}"
         state: absent
 
-    - name: Create ZIP package directly from lambda_wildfire_monitoring.py
-      command: zip -j {{ zip_file }} {{ lambda_folder }}/lambda_wildfire_monitoring.py
+    - name: Create ZIP package directly from daily_monitoring_function.py
+      command: zip -j {{ zip_file }} {{ lambda_folder }}/daily_monitoring_function.py
 
     - name: Update AWS Lambda function with new code
       command: >
