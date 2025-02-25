@@ -14,7 +14,6 @@ dynamodb = boto3.resource('dynamodb')
 
 # Constants
 BUCKET_NAME = os.environ['BUCKET_NAME']
-SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 PARAMETER_NAME_NASA = os.environ['NASA_API_PARAMETER_NAME']
 PARAMETER_NAME_OPENCAGE = os.environ['OPENCAGE_API_PARAMETER_NAME']
 FRP_THRESHOLD = 9  # Minimum Fire Radiative Power (FRP) to trigger alerts
@@ -23,6 +22,7 @@ DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']  # DynamoDB table name
 # DynamoDB Table
 subscription_table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 
+# Get API Keys from SSM Parameter Store
 def get_nasa_api_key():
     response = ssm.get_parameter(Name=PARAMETER_NAME_NASA, WithDecryption=True)
     return response['Parameter']['Value']
@@ -31,6 +31,7 @@ def get_opencage_api_key():
     response = ssm.get_parameter(Name=PARAMETER_NAME_OPENCAGE, WithDecryption=True)
     return response['Parameter']['Value']
 
+# Get Coordinates from Zip Code using OpenCage API
 def get_coordinates_from_zip(zip_code):
     api_key = get_opencage_api_key()
     url = f"https://api.opencagedata.com/geocode/v1/json?q={zip_code}&key={api_key}"
@@ -43,11 +44,13 @@ def get_coordinates_from_zip(zip_code):
         return coords['lat'], coords['lng']
     return None, None
 
+# Fetch All Subscriptions from DynamoDB
 def get_all_subscriptions():
     response = subscription_table.scan()
     return response.get('Items', [])
 
-def cluster_and_alert_fires(nearby_fires, user_email):
+# Send Clustered Alerts to Specific SNS Topic
+def cluster_and_alert_fires(nearby_fires, user_email, topic_arn):
     grid_size = 0.0725  # 5 miles in degrees (~0.0725 degrees)
     clusters = {}
 
@@ -75,10 +78,11 @@ def cluster_and_alert_fires(nearby_fires, user_email):
                 f"Representative FRP: {fire['frp']} MW\n"
                 f"Date: {fire['acq_date']}"
             )
-            sns.publish(TopicArn=SNS_TOPIC_ARN, Message=message, Subject="Clustered Wildfire Alert")
+            sns.publish(TopicArn=topic_arn, Message=message, Subject="Clustered Wildfire Alert")
             print(f"Clustered Alert sent: {message}")
 
-def fetch_and_process_data(user_lat, user_lon, user_email, zip_code):
+# Fetch Wildfire Data and Process Alerts
+def fetch_and_process_data(user_lat, user_lon, user_email, zip_code, topic_arn):
     api_key = get_nasa_api_key()
     api_url = f'https://firms.modaps.eosdis.nasa.gov/api/country/csv/{api_key}/MODIS_NRT/USA/1'
     response = requests.get(api_url)
@@ -109,8 +113,9 @@ def fetch_and_process_data(user_lat, user_lon, user_email, zip_code):
         s3_key = f"{user_email}/{zip_code}/{file_name}"
         s3.put_object(Bucket=BUCKET_NAME, Key=s3_key, Body=nearby_fires.to_csv(index=False))
         print(f"Filtered data uploaded to S3: {s3_key}")
-        cluster_and_alert_fires(nearby_fires, user_email)
+        cluster_and_alert_fires(nearby_fires, user_email, topic_arn)
 
+# Lambda Handler
 def lambda_handler(event, context):
     print("Received event:", json.dumps(event))
 
@@ -119,9 +124,15 @@ def lambda_handler(event, context):
         for subscription in subscriptions:
             zip_code = subscription['zip_code']
             email = subscription['email']
+            topic_arn = subscription.get('sns_topic_arn')  # Retrieve the specific SNS topic ARN
+            if not topic_arn:
+                print(f"No SNS topic ARN found for zip code {zip_code}")
+                continue
+
             user_lat, user_lon = get_coordinates_from_zip(zip_code)
             if user_lat and user_lon:
-                fetch_and_process_data(user_lat, user_lon, email, zip_code)
+                fetch_and_process_data(user_lat, user_lon, email, zip_code, topic_arn)
+
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},
