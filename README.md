@@ -1,37 +1,51 @@
 # 🌎 Wildfire Monitoring System 🔥
 
-[![Terraform](https://img.shields.io/badge/Terraform-IaC-blueviolet)](https://www.terraform.io/)
 [![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange)](https://aws.amazon.com/lambda/)
 [![Ansible](https://img.shields.io/badge/Ansible-Automation-red)](https://www.ansible.com/)
+[![S3](https://img.shields.io/badge/AWS-S3-blue)](https://aws.amazon.com/s3/)
+[![API Gateway](https://img.shields.io/badge/API-Gateway-yellow)](https://aws.amazon.com/api-gateway/)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-green)](https://aws.amazon.com/dynamodb/)
+[![SNS](https://img.shields.io/badge/SNS-Notifications-purple)](https://aws.amazon.com/sns/)
+[![EventBridge](https://img.shields.io/badge/EventBridge-Scheduling-blueviolet)](https://aws.amazon.com/eventbridge/)
 
-🚀 **Automated wildfire detection and alerting system using AWS Lambda, Terraform, and Ansible.**
+🚀 **Automated wildfire detection and alerting system using AWS Lambda, S3, DynamoDB, SNS, API Gateway, and EventBridge.**
+
+---
 
 ## 📌 Overview
+The **Wildfire Monitoring System** is a cloud-based solution that detects wildfires in real-time using **NASA's VIIRS and MODIS satellite data**. The system provides **automated alerts** to **subscribed users** based on **geographical wildfire activity**.
 
-The **Wildfire Monitoring System** is a cloud-based solution designed to detect wildfires in real time using satellite data. It leverages **AWS Lambda**, **Terraform**, and **Ansible** to process data, automate deployment, and send alerts.
+### ✅ **Key Features:**
+- **Frontend Webpage:** Simple **webpage hosted on S3** using **HTML, CSS, and JavaScript** for **user subscriptions**.
+- **UserOnboardingFunction:** Handles **user sign-ups**, **stores user data in DynamoDB**, and **subscribes users to location-specific SNS topics**.
+- **DailyMonitoringFunction:** **Scheduled via EventBridge** to **fetch wildfire data**, **filter by FRP and user location**, and **send targeted alerts**.
+- **Ansible Automation:** Automates the **packaging and deployment** of **Lambda functions**.
 
-✅ **AWS Lambda** processes satellite wildfire data  
-✅ **Terraform** provisions the infrastructure automatically  
-✅ **Ansible** automates Lambda packaging and deployment  
+---
 
-🔥 **Goal:** Provide a scalable, automated wildfire monitoring system that can be deployed in any AWS account.
+## 🛠️ **Architecture**
 
-## 🛠️ Architecture
+### **System Components:**
+1. **Frontend:** S3-hosted webpage for **user input**.
+2. **API Gateway:** Receives **subscription requests**.
+3. **Lambda Functions:**
+   - **UserOnboardingFunction:** Processes **user subscriptions**.
+   - **DailyMonitoringFunction:** **Fetches wildfire data** and **sends alerts**.
+4. **DynamoDB:** Stores **user email and zip code**.
+5. **SNS:** Sends **email alerts** to **subscribed users**.
+6. **EventBridge:** Triggers **daily wildfire data processing**.
+7. **S3 Bucket:** Stores **filtered wildfire data**.
 
-Below is the architecture of the Wildfire Monitoring System:
+### 📈 **Architecture Diagram:**
 
 <img src="architecture_diagram.svg" alt="Wildfire Monitoring Architecture" width="800">
 
-## 🚀 Deployment Instructions
+---
 
-Follow these steps to deploy the Wildfire Monitoring System:
+## 🚀 **Deployment Instructions**
 
-### **1️⃣ Prerequisites**
+### **1️⃣ Prerequisites:**
 - **AWS Account**
-- **Terraform Installed** (`brew install terraform` or [Install Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
-- **Ansible Installed** (`brew install ansible` or [Install Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html))
-
-### **2️⃣ Clone the Repository**
+- **Ansible Installed:**
 ```sh
-git clone https://github.com/ilyasd3/wildfire-monitoring.git
-cd wildfire-monitoring
+brew install ansible
