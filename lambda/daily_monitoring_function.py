@@ -16,7 +16,7 @@ dynamodb = boto3.resource('dynamodb')
 BUCKET_NAME = os.environ['BUCKET_NAME']
 PARAMETER_NAME_NASA = os.environ['NASA_API_PARAMETER_NAME']
 PARAMETER_NAME_OPENCAGE = os.environ['OPENCAGE_API_PARAMETER_NAME']
-FRP_THRESHOLD = 9  # Minimum Fire Radiative Power (FRP) to trigger alerts
+FRP_THRESHOLD = 50  # Minimum Fire Radiative Power (FRP) to trigger alerts
 DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']  # DynamoDB table name
 
 # DynamoDB Table
