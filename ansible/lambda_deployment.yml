@@ -1,0 +1,60 @@
+---
+- name: Automate AWS Lambda Deployment
+  hosts: localhost
+  connection: local
+  vars:
+    project_root: "/Users/ilyasd3/wildfire-monitoring"
+    
+    # Lambda function names
+    wildfire_monitoring_function_name: "WildfireMonitoringFunction"
+    user_onboarding_function_name: "UserOnboardingFunction"
+    
+    # ZIP file paths
+    daily_monitoring_zip: "{{ project_root }}/artifacts/daily_monitoring_function.zip"
+    user_onboarding_zip: "{{ project_root }}/artifacts/user_onboarding_function.zip"
+    
+    # Lambda source folders
+    lambda_folder: "{{ project_root }}/lambda_functions"
+
+  tasks:
+
+    - name: Ensure artifacts directory exists
+      file:
+        path: "{{ project_root }}/artifacts"
+        state: directory
+
+    - name: Remove old ZIP files if they exist
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ daily_monitoring_zip }}"
+        - "{{ user_onboarding_zip }}"
+
+    - name: Create ZIP package for WildfireMonitoringFunction
+      command: zip -j {{ daily_monitoring_zip }} {{ lambda_folder }}/daily_monitoring_function.py
+
+    - name: Create ZIP package for UserOnboardingFunction
+      command: zip -j {{ user_onboarding_zip }} {{ lambda_folder }}/user_onboarding_function.py
+
+    - name: Update WildfireMonitoringFunction in AWS Lambda
+      command: >
+        aws lambda update-function-code 
+        --function-name {{ wildfire_monitoring_function_name }} 
+        --zip-file fileb://{{ daily_monitoring_zip }}
+      register: wildfire_lambda_update
+
+    - name: Display WildfireMonitoringFunction update response
+      debug:
+        var: wildfire_lambda_update
+
+    - name: Update UserOnboardingFunction in AWS Lambda
+      command: >
+        aws lambda update-function-code 
+        --function-name {{ user_onboarding_function_name }} 
+        --zip-file fileb://{{ user_onboarding_zip }}
+      register: user_onboarding_lambda_update
+
+    - name: Display UserOnboardingFunction update response
+      debug:
+        var: user_onboarding_lambda_update
