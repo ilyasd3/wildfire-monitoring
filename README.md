@@ -63,6 +63,8 @@ cd ansible
 ansible-playbook lambda_deployment.yml
 ```
 
+---
+
 ## 🔥 **How It Works:**
 
 ### 🟢 **User Initiated Flow:**
@@ -79,11 +81,6 @@ ansible-playbook lambda_deployment.yml
 4. **Processes data** based on **user zip codes** and **FRP**.
 5. **Stores filtered data in S3 bucket**.
 6. **Sends email alerts** to **subscribed users** via **SNS**.
-
----
-
-## 📜 **License**
-This project is licensed under the **MIT License**.
 
 ---
 
