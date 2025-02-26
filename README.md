@@ -8,12 +8,12 @@
 [![EventBridge](https://img.shields.io/badge/EventBridge-Scheduling-blueviolet)](https://aws.amazon.com/eventbridge/)
 [![Ansible](https://img.shields.io/badge/Ansible-Automation-red)](https://www.ansible.com/)
 
-🚀 **Automated wildfire detection and alerting system using AWS Lambda, S3, DynamoDB, SNS, API Gateway, and EventBridge.**
+**Automated wildfire detection and alerting system using AWS Lambda, S3, DynamoDB, SNS, API Gateway, and EventBridge.**
 
 ---
 
 ## 📌 Overview
-The **Wildfire Monitoring System** is a cloud-based solution that detects wildfires in real-time using **NASA's VIIRS and MODIS satellite data**. The system provides **automated alerts** to **subscribed users** based on **geographical wildfire activity**.
+The **Wildfire Monitoring System** is a cloud-based solution that detects wildfires in real-time using **NASA's MODIS satellite data**. The system provides **automated alerts** to **subscribed users** based on **geographical wildfire activity**.
 
 ### ✅ **Key Features:**
 - **Frontend Webpage:** Simple **webpage hosted on S3** using **HTML, CSS, and JavaScript** for **user subscriptions**.
@@ -23,20 +23,7 @@ The **Wildfire Monitoring System** is a cloud-based solution that detects wildfi
 
 ---
 
-## 🛠️ **Architecture**
-
-### **System Components:**
-1. **Frontend:** S3-hosted webpage for **user input**.
-2. **API Gateway:** Receives **subscription requests**.
-3. **Lambda Functions:**
-   - **UserOnboardingFunction:** Processes **user subscriptions**.
-   - **DailyMonitoringFunction:** **Fetches wildfire data** and **sends alerts**.
-4. **DynamoDB:** Stores **user email and zip code**.
-5. **SNS:** Sends **email alerts** to **subscribed users**.
-6. **EventBridge:** Triggers **daily wildfire data processing**.
-7. **S3 Bucket:** Stores **filtered wildfire data**.
-
-### 📈 **Architecture Diagram:**
+## 🛠️ **Architecture Diagram**
 
 <img src="architecture_diagram.svg" alt="Wildfire Monitoring Architecture" width="800">
 
@@ -65,7 +52,7 @@ ansible-playbook lambda_deployment.yml
 
 ---
 
-## 🔥 **How It Works:**
+## 🔥 **How It Works**
 
 ### 🟢 **User Initiated Flow:**
 1. **User enters email and zip code** on **S3-hosted website**.
