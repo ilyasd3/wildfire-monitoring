@@ -1,12 +1,12 @@
 # 🌎 Wildfire Monitoring System 🔥
 
-[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900)](https://aws.amazon.com/lambda/)
-[![S3](https://img.shields.io/badge/AWS-S3-146EB4)](https://aws.amazon.com/s3/)
-[![API Gateway](https://img.shields.io/badge/API-Gateway-D13212)](https://aws.amazon.com/api-gateway/)
-[![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-4053D6)](https://aws.amazon.com/dynamodb/)
-[![SNS](https://img.shields.io/badge/SNS-Notifications-FF9900)](https://aws.amazon.com/sns/)
-[![EventBridge](https://img.shields.io/badge/EventBridge-Scheduling-FF4F8B)](https://aws.amazon.com/eventbridge/)
-[![Ansible](https://img.shields.io/badge/Ansible-Automation-ee0000)](https://www.ansible.com/)
+[![AWS Lambda](https://img.shields.io/badge/Compute-Lambda-ED7100)](https://aws.amazon.com/lambda/)
+[![S3](https://img.shields.io/badge/Storage-S3-7AA116)](https://aws.amazon.com/s3/)
+[![API Gateway](https://img.shields.io/badge/API-Gateway-8C4FFF)](https://aws.amazon.com/api-gateway/)
+[![DynamoDB](https://img.shields.io/badge/NoSQL-DynamoDB-C925D1)](https://aws.amazon.com/dynamodb/)
+[![SNS](https://img.shields.io/badge/Notifications-SNS-E7157B)](https://aws.amazon.com/sns/)
+[![EventBridge](https://img.shields.io/badge/Scheduling-EventBridge-E7157B)](https://aws.amazon.com/eventbridge/)
+[![Ansible](https://img.shields.io/badge/Automation-Ansible-CC0000)](https://www.ansible.com/)
 
 **Automated wildfire detection and alerting system using AWS Lambda, S3, DynamoDB, SNS, API Gateway, and EventBridge.**
 
