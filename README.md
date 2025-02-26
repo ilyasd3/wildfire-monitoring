@@ -2,7 +2,7 @@
 
 [![AWS Lambda](https://img.shields.io/badge/Compute-Lambda-ED7100)](https://aws.amazon.com/lambda/)
 [![S3](https://img.shields.io/badge/Storage-S3-7AA116)](https://aws.amazon.com/s3/)
-[![API Gateway](https://img.shields.io/badge/API-Gateway-8C4FFF)](https://aws.amazon.com/api-gateway/)
+[![API Gateway](https://img.shields.io/badge/API-API%20Gateway-8C4FFF)](https://aws.amazon.com/api-gateway/)
 [![DynamoDB](https://img.shields.io/badge/NoSQL-DynamoDB-C925D1)](https://aws.amazon.com/dynamodb/)
 [![SNS](https://img.shields.io/badge/Notifications-SNS-E7157B)](https://aws.amazon.com/sns/)
 [![EventBridge](https://img.shields.io/badge/Scheduling-EventBridge-E7157B)](https://aws.amazon.com/eventbridge/)
