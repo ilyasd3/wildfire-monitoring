@@ -1,6 +1,6 @@
 # 🌎 Wildfire Monitoring System 🔥
 
-[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?logo=aws&logoColor=white)](https://aws.amazon.com/lambda/)
+[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?logo=awslambda&logoColor=white)](https://aws.amazon.com/lambda/)
 [![S3](https://img.shields.io/badge/AWS-S3-blue?logo=aws&logoColor=white)](https://aws.amazon.com/s3/)
 [![API Gateway](https://img.shields.io/badge/API-Gateway-red?logo=aws&logoColor=white)](https://aws.amazon.com/api-gateway/)
 [![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-4053D6?logo=amazon-dynamodb&logoColor=white)](https://aws.amazon.com/dynamodb/)
