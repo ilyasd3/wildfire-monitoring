@@ -14,7 +14,7 @@
     user_onboarding_zip: "{{ project_root }}/artifacts/user_onboarding_function.zip"
     
     # Lambda source folders
-    lambda_folder: "{{ project_root }}/lambda_functions"
+    lambda_folder: "{{ project_root }}/lambda"
 
   tasks:
 
