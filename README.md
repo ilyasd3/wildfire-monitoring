@@ -1,12 +1,13 @@
 # 🌎 Wildfire Monitoring System 🔥
 
-[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange)](https://aws.amazon.com/lambda/)
-[![S3](https://img.shields.io/badge/AWS-S3-blue)](https://aws.amazon.com/s3/)
-[![API Gateway](https://img.shields.io/badge/API-Gateway-yellow)](https://aws.amazon.com/api-gateway/)
-[![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-green)](https://aws.amazon.com/dynamodb/)
-[![SNS](https://img.shields.io/badge/SNS-Notifications-purple)](https://aws.amazon.com/sns/)
-[![EventBridge](https://img.shields.io/badge/EventBridge-Scheduling-blueviolet)](https://aws.amazon.com/eventbridge/)
-[![Ansible](https://img.shields.io/badge/Ansible-Automation-red)](https://www.ansible.com/)
+[![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-orange?logo=amazonaws&logoColor=white)](https://aws.amazon.com/lambda/)
+[![S3](https://img.shields.io/badge/AWS-S3-blue?logo=amazonaws&logoColor=white)](https://aws.amazon.com/s3/)
+[![API Gateway](https://img.shields.io/badge/API-Gateway-red?logo=amazonaws&logoColor=white)](https://aws.amazon.com/api-gateway/)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-NoSQL-4053D6?logo=amazon-dynamodb&logoColor=white)](https://aws.amazon.com/dynamodb/)
+[![SNS](https://img.shields.io/badge/SNS-Notifications-orange?logo=amazonaws&logoColor=white)](https://aws.amazon.com/sns/)
+[![EventBridge](https://img.shields.io/badge/EventBridge-Scheduling-FF4F8B?logo=amazonaws&logoColor=white)](https://aws.amazon.com/eventbridge/)
+[![Ansible](https://img.shields.io/badge/Ansible-Automation-ee0000?logo=ansible&logoColor=white)](https://www.ansible.com/)
+
 
 **Automated wildfire detection and alerting system using AWS Lambda, S3, DynamoDB, SNS, API Gateway, and EventBridge.**
 
