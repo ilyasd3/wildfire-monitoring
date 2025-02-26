@@ -1,9 +1,7 @@
-# Ignore Terraform state files and provider binaries
-.terraform/
-terraform.tfstate
-terraform.tfstate.backup
-.terraform.lock.hcl
-
 # Ignore macOS system files
 .DS_Store
+
+# Ignore Lambda deployment artifacts
+artifacts/*.zip
+
 
