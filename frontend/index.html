@@ -7,11 +7,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Title and Fire Emoji -->
     <h1 class="title">Wildfire Alerts</h1>
     <h1 class="emoji">🔥</h1>
     
-    <!-- Subscription Form -->
     <form id="subscriptionForm">
         <label for="zipCode">Zip Code:</label>
         <input type="text" id="zipCode" name="zipCode" placeholder="Enter your zip code" required>
@@ -20,17 +18,15 @@
         <input type="email" id="email" name="email" placeholder="Enter your email address" required>
     
         <button type="submit">Subscribe</button>
-        <button type="button" id="resetButton" style="display:none;">Enter Another Response</button>
+        <button type="button" id="resetButton">Enter Another Response</button>
     </form>    
 
     <p id="message"></p>
 
-    <!-- Loading Spinner -->
     <div id="loadingSpinner">
         <div class="spinner"></div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>Stay safe. Learn more about <a href="https://www.readyforwildfire.org" target="_blank">Wildfire Preparedness</a>.</p>
     </footer>

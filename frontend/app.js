@@ -14,57 +14,42 @@ document.getElementById('subscriptionForm').addEventListener('submit', async fun
     try {
         const response = await fetch('https://0c92hj1w8e.execute-api.us-east-1.amazonaws.com/prod/subscribe', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                zip_code: zipCode,
-                email: email
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ zip_code: zipCode, email: email })
         });
 
         if (!response.ok) {
-            // Attempt to parse error response as JSON
-            let errorMessage = 'Subscription failed. Please try again.';
-            try {
-                const errorData = await response.json();
-                console.error('Error response from server:', errorData);
-                errorMessage = errorData.error || errorMessage;
-            } catch (jsonError) {
-                console.error('Failed to parse error response as JSON', jsonError);
-            }
-            throw new Error(errorMessage);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Subscription failed. Please try again.');
         }
 
-        // Parse successful response as JSON
-        const responseData = await response.json();
-        console.log('Server response:', responseData);
+        const data = await response.json();
+        console.log('Success:', data);
 
-        // On successful subscription
         subscribeButton.textContent = 'Subscribed ✓';
         subscribeButton.classList.add('subscribed');
-        resetButton.style.display = 'block'; // Show the reset button
+        resetButton.style.display = 'block';
 
     } catch (error) {
-        console.error('Subscription failed:', error);
+        console.error('Error:', error);
         subscribeButton.textContent = 'Try Again';
         subscribeButton.classList.remove('subscribed');
-        subscribeButton.disabled = false; // Re-enable the button to try again
+        subscribeButton.disabled = false;
         alert(error.message);
     } finally {
         subscribeButton.classList.remove('loading');
     }
 });
 
-// Reset form to allow a new submission
+// Reset form
 document.getElementById('resetButton').addEventListener('click', function() {
+    const form = document.getElementById('subscriptionForm');
     const subscribeButton = document.querySelector('button[type="submit"]');
     const resetButton = document.getElementById('resetButton');
-    const form = document.getElementById('subscriptionForm');
 
-    form.reset(); // Clear the form inputs
+    form.reset();
     subscribeButton.textContent = 'Subscribe';
     subscribeButton.classList.remove('subscribed');
     subscribeButton.disabled = false;
-    resetButton.style.display = 'none'; // Hide the reset button
+    resetButton.style.display = 'none';
 });
