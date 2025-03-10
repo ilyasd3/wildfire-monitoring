@@ -6,7 +6,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', async fun
     const subscribeButton = document.querySelector('button[type="submit"]');
     const resetButton = document.getElementById('resetButton');
 
-    // Show loading state
+    // Shows subscription loading
     subscribeButton.textContent = 'Subscribing...';
     subscribeButton.disabled = true;
     subscribeButton.classList.add('loading');
@@ -41,7 +41,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', async fun
     }
 });
 
-// Reset form
+// Resets the form
 document.getElementById('resetButton').addEventListener('click', function() {
     const form = document.getElementById('subscriptionForm');
     const subscribeButton = document.querySelector('button[type="submit"]');

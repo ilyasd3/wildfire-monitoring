@@ -1,9 +1,6 @@
-/* styles.css */
-
-/* Importing the "Poppins" font from Google Fonts */
+/* Importing the Poppins font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-/* Global Styles */
 body {
     background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
     color: #ffffff;
@@ -17,7 +14,6 @@ body {
     text-align: center;
 }
 
-/* Title Styling */
 h1.title {
     font-size: 3.5rem;
     font-weight: 600;
@@ -25,20 +21,19 @@ h1.title {
     color: #ff5722;
 }
 
-/* Large Fire Emoji */
+/* Fire emoji */
 h1.emoji {
     font-size: 8rem;
     margin: 0;
     animation: bounce 2s infinite;
 }
 
-/* Emoji Bounce Animation */
+/* Emoji bounce animation */
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
 }
 
-/* Form Styling */
 form {
     background: #2a2a2a;
     padding: 30px 20px;
@@ -47,19 +42,20 @@ form {
     width: 90%;
     max-width: 400px;
     margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
 }
 
-/* Label Styling */
 label {
     display: block;
     margin-bottom: 5px;
     text-align: left;
+    width: 100%;
     max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-/* Input Field Styling */
 input[type="text"],
 input[type="email"] {
     width: 100%;
@@ -83,7 +79,6 @@ input:focus {
     box-shadow: 0 0 8px rgba(255, 87, 34, 0.6);
 }
 
-/* Subscribe Button Styling */
 button[type="submit"] {
     width: 100%;
     max-width: 250px;
@@ -98,38 +93,35 @@ button[type="submit"] {
     transition: all 0.3s ease;
 }
 
-/* Button Hover Effect */
 button[type="submit"]:hover:not(.subscribed):not(.loading) {
     background: #e64a19;
     transform: translateY(-2px);
 }
 
-/* Button Disabled State */
 button.loading {
     background: #cccccc;
     color: #666666;
     cursor: not-allowed;
 }
 
-/* Button Subscribed State */
 button.subscribed {
     background: #388e3c;
     cursor: not-allowed;
 }
 
-/* Reset Button Styling */
 #resetButton {
+    display: none;
     width: 100%;
     max-width: 250px;
     padding: 10px 16px;
-    margin-top: 10px;
+    margin: 10px auto;
     border: none;
     border-radius: 8px;
     background: #e64a19;
     color: #ffffff;
     font-weight: bold;
     cursor: pointer;
-    display: none;
+    text-align: center;
 }
 
 #resetButton:hover {
@@ -137,7 +129,6 @@ button.subscribed {
     transform: translateY(-2px);
 }
 
-/* Footer */
 footer {
     margin-top: 20px;
     color: #aaaaaa;
