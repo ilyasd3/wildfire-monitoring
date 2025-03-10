@@ -31,12 +31,14 @@
         - "{{ daily_monitoring_zip }}"
         - "{{ user_onboarding_zip }}"
 
+    # Package the Lambda functions
     - name: Create ZIP package for WildfireMonitoringFunction
       command: zip -j {{ daily_monitoring_zip }} {{ lambda_folder }}/daily_monitoring_function.py
 
     - name: Create ZIP package for UserOnboardingFunction
       command: zip -j {{ user_onboarding_zip }} {{ lambda_folder }}/user_onboarding_function.py
 
+    # Deploy to AWS
     - name: Update WildfireMonitoringFunction in AWS Lambda
       command: >
         aws lambda update-function-code 
