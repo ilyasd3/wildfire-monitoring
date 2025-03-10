@@ -3,69 +3,111 @@ import json
 import boto3
 from datetime import datetime
 
+# Initialize AWS clients
 sns = boto3.client('sns')
 dynamodb = boto3.resource('dynamodb')
 
 DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']
-
 subscription_table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 
-def store_subscription(email, zip_code, topic_arn):
-    subscription_table.put_item(
-        Item={
-            'email': email,
-            'zip_code': zip_code,
-            'sns_topic_arn': topic_arn,
-            'subscription_date': datetime.now().strftime('%Y-%m-%d')
-        }
-    )
-    print(f"Stored subscription for {email} with topic {topic_arn} in DynamoDB")
+def save_subscription(email, zip_code, topic_arn):
+    """
+    Save user subscription details to DynamoDB.
+    """
+    try:
+        subscription_table.put_item(
+            Item={
+                'email': email,
+                'zip_code': zip_code,
+                'sns_topic_arn': topic_arn,
+                'subscription_date': datetime.now().strftime('%Y-%m-%d')
+            }
+        )
+        print(f"Saved subscription for {email} to DynamoDB")
+    except Exception as e:
+        print(f"Failed to save subscription: {str(e)}")
+        raise
 
-def create_or_get_sns_topic(zip_code):
+def get_or_create_sns_topic(zip_code):
+    """
+    Find existing SNS topic for zip code or create a new one.
+    Returns the topic ARN.
+    """
     topic_name = f"wildfire-alerts-{zip_code}"
-    # Check if the topic already exists
-    existing_topics = sns.list_topics().get('Topics', [])
-    for topic in existing_topics:
+    
+    # Check if SNS topic already exists
+    topics = sns.list_topics().get('Topics', [])
+    for topic in topics:
         if topic_name in topic['TopicArn']:
-            print(f"Found existing SNS topic for zip code {zip_code}: {topic['TopicArn']}")
+            print(f"Found existing SNS topic for zip code {zip_code}")
             return topic['TopicArn']
     
-    # Create a new SNS topic if not found
-    response = sns.create_topic(Name=topic_name)
-    print(f"Created new SNS topic for zip code {zip_code}: {response['TopicArn']}")
-    return response['TopicArn']
+    # Create a new SNS topic if it doesn't already exist
+    try:
+        response = sns.create_topic(Name=topic_name)
+        print(f"Created new SNS topic for zip code {zip_code}")
+        return response['TopicArn']
+    except Exception as e:
+        print(f"Failed to create SNS topic: {str(e)}")
+        raise
 
 def subscribe_user_to_topic(email, topic_arn):
-    response = sns.subscribe(
-        TopicArn=topic_arn,
-        Protocol='email',
-        Endpoint=email
-    )
-    print(f"Subscribed {email} to SNS topic {topic_arn}")
-    return response
+    """
+    Subscribe user's email to the SNS topic.
+    """
+    try:
+        response = sns.subscribe(
+            TopicArn=topic_arn,
+            Protocol='email',
+            Endpoint=email
+        )
+        print(f"Subscribed {email} to SNS topic")
+        return response
+    except Exception as e:
+        print(f"Failed to subscribe user: {str(e)}")
+        raise
 
 def lambda_handler(event, context):
-    print("Received event:", json.dumps(event))
-    body = json.loads(event.get('body', '{}'))
-    zip_code = body.get('zip_code')
-    email = body.get('email')
+    """
+    Main handler for user subscription requests.
+    Expects POST request with email and zip_code in body.
+    """
+    print("Processing subscription request...")
+    
+    try:
+        body = json.loads(event.get('body', '{}'))
+        zip_code = body.get('zip_code')
+        email = body.get('email')
 
-    if zip_code and email:
-        # Create or get the SNS topic for the specific zip code
-        topic_arn = create_or_get_sns_topic(zip_code)
-        
-        # Store the subscription in DynamoDB
-        store_subscription(email, zip_code, topic_arn)
-        
-        # Subscribe the user to the SNS topic
+        if not zip_code or not email:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "error": "Missing required fields",
+                    "message": "Please provide both email and zip_code"
+                })
+            }
+
+        # Set up subscription
+        topic_arn = get_or_create_sns_topic(zip_code)
+        save_subscription(email, zip_code, topic_arn)
         subscribe_user_to_topic(email, topic_arn)
         
         return {
             "statusCode": 200,
-            "body": json.dumps({"message": "Subscription successful!"})
+            "body": json.dumps({
+                "message": "Subscription successful!",
+                "email": email,
+                "zip_code": zip_code
+            })
         }
 
-    return {
-        "statusCode": 400,
-        "body": json.dumps({"error": "Invalid input. 'zip_code' and 'email' are required."})
-    }
+    except Exception as e:
+        print(f"Error processing request: {str(e)}")
+        return {
+            "statusCode": 500,
+            "body": json.dumps({
+                "error": "Internal server error",
+                "message": str(e)
+            })
+        }
