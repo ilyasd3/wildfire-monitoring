@@ -47,7 +47,7 @@ def process_fires(lat, lon, email, zip_code, topic_arn, bucket_name):
 
         if not nearby_fires.empty:
             # ✅ Save filtered fires to S3
-            file_name = f'fires_{zip_code}_{datetime.datetime.now().strftime("%Y%m%d")}.csv'
+            file_name = f'wildfire_data_{zip_code}.csv'
             s3_key = f"{email}/{zip_code}/{file_name}"
             s3.put_object(Bucket=bucket_name, Key=s3_key, Body=nearby_fires.to_csv(index=False))
 
