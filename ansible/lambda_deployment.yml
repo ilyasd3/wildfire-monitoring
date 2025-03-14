@@ -4,17 +4,17 @@
   connection: local
   vars:
     project_root: "/Users/ilyasd3/wildfire-monitoring"
-    
-    # Lambda function names
+
+    # Lambda function names in AWS
     wildfire_monitoring_function_name: "WildfireMonitoringFunction"
     user_onboarding_function_name: "UserOnboardingFunction"
-    
+
     # ZIP file paths
     daily_monitoring_zip: "{{ project_root }}/artifacts/daily_monitoring_function.zip"
     user_onboarding_zip: "{{ project_root }}/artifacts/user_onboarding_function.zip"
-    
+
     # Lambda source folders
-    lambda_folder: "{{ project_root }}/lambda"
+    lambda_folder: "{{ project_root }}/lambda_functions"
 
   tasks:
 
@@ -33,12 +33,24 @@
 
     # Package the Lambda functions
     - name: Create ZIP package for WildfireMonitoringFunction
-      command: zip -j {{ daily_monitoring_zip }} {{ lambda_folder }}/daily_monitoring_function.py
+      command: >
+        bash -c "cd {{ lambda_folder }}/daily_monitoring_function && zip -r {{ daily_monitoring_zip }} lambda_function.py ../utils -x '**/__pycache__/*'"
 
     - name: Create ZIP package for UserOnboardingFunction
-      command: zip -j {{ user_onboarding_zip }} {{ lambda_folder }}/user_onboarding_function.py
+      command: >
+        bash -c "cd {{ lambda_folder }}/user_onboarding_function && zip -r {{ user_onboarding_zip }} lambda_function.py ../utils -x '**/__pycache__/*'"
 
-    # Deploy to AWS
+    # ✅ Verify ZIP file exists before deployment
+    - name: Fail if ZIP file is missing
+      stat:
+        path: "{{ daily_monitoring_zip }}"
+      register: daily_zip_check
+
+    - name: Fail if ZIP file does not exist
+      fail:
+        msg: "ZIP file for WildfireMonitoringFunction is missing!"
+      when: not daily_zip_check.stat.exists
+
     - name: Update WildfireMonitoringFunction in AWS Lambda
       command: >
         aws lambda update-function-code 
