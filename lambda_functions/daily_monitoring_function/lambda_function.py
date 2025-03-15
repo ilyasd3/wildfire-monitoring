@@ -4,7 +4,7 @@ from utils.geolocation_utils import get_coordinates
 from utils.wildfire_utils import process_fires
 from utils.dynamodb_utils import get_subscriptions
 
-# Retrieve environment variables
+# Retrieve S3 bucket name from environment variables
 BUCKET_NAME = os.environ['BUCKET_NAME']
 
 def lambda_handler(event, context):
@@ -13,7 +13,7 @@ def lambda_handler(event, context):
         if event.get('source') != 'aws.events':
             return {"statusCode": 400, "body": json.dumps({"error": "Invalid event source"})}
 
-        # Fetch all active subscriptions from DynamoDB
+        # Fetch all subscriptions from DynamoDB
         subscriptions = get_subscriptions()
         if not subscriptions:
             return {"statusCode": 200, "body": json.dumps({"message": "No subscriptions to process"})}

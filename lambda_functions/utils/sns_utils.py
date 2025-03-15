@@ -3,10 +3,8 @@ import boto3
 sns = boto3.client('sns')
 
 def get_or_create_sns_topic(zip_code):
-    """
-    Find existing SNS topic for zip code or create a new one.
-    Returns the topic ARN.
-    """
+    """Find existing SNS topic for zip code or create a new one."""
+
     topic_name = f"wildfire-alerts-{zip_code}"
     
     # Check if SNS topic already exists
@@ -16,7 +14,7 @@ def get_or_create_sns_topic(zip_code):
             print(f"Found existing SNS topic for zip code {zip_code}")
             return topic['TopicArn']
     
-    # Create a new SNS topic if it doesn't already exist
+    # Create a new SNS topic if not found
     try:
         response = sns.create_topic(Name=topic_name)
         print(f"Created new SNS topic for zip code {zip_code}")
@@ -26,9 +24,8 @@ def get_or_create_sns_topic(zip_code):
         raise
 
 def subscribe_user_to_topic(email, topic_arn):
-    """
-    Subscribe user's email to the SNS topic.
-    """
+    """Subscribe user's email to the SNS topic."""
+
     try:
         response = sns.subscribe(
             TopicArn=topic_arn,
@@ -42,28 +39,45 @@ def subscribe_user_to_topic(email, topic_arn):
         raise
 
 def send_clustered_alert(fires, email, topic_arn):
-    """
-    Group nearby fires and send a consolidated alert email.
-    """
+    """Group nearby fires and send a consolidated alert per cluster."""
+
     if fires.empty:
         return  # No fires to report
 
-    # Create a summary of all fires detected
-    fire_summary = "\n".join([
-        f"🔥 {row['latitude']:.4f}, {row['longitude']:.4f} - FRP: {row['frp']} MW, Date: {row['acq_date']}"
-        for _, row in fires.iterrows()
-    ])
+    clusters = {}
+    GRID_SIZE = 0.0725  # ~5 miles in degrees
 
-    # Construct the email message
-    message = (
-        f"🔥 Wildfire Alert for Your Area!\n\n"
-        f"We have detected {len(fires)} wildfire(s) in your vicinity:\n\n"
-        f"{fire_summary}\n\n"
-        f"Stay safe and monitor local news for evacuation instructions."
-    )
+    # Group fires into 5-mile clusters
+    for _, fire in fires.iterrows():
+        lat, lon = fire['latitude'], fire['longitude']
+        grid_lat, grid_lon = round(lat / GRID_SIZE) * GRID_SIZE, round(lon / GRID_SIZE) * GRID_SIZE
+        grid_key = f"{grid_lat},{grid_lon}"
+
+        if grid_key not in clusters:
+            clusters[grid_key] = {'center': (grid_lat, grid_lon), 'fires': []}
+        clusters[grid_key]['fires'].append(fire)
+
+    # Format message for each cluster
+    alert_messages = []
+    for cluster in clusters.values():
+        if not cluster['fires']:
+            continue
+
+        fire = cluster['fires'][0]  # Use first fire in cluster as representative
+        message = (
+            f"🔥 Wildfire Alert!\n"
+            f"Location: {cluster['center'][0]:.4f}, {cluster['center'][1]:.4f}\n"
+            f"Number of fires in cluster: {len(cluster['fires'])}\n"
+            f"Fire Radiative Power: {fire['frp']} MW\n"
+            f"Date: {fire['acq_date']}"
+        )
+        alert_messages.append(message)
+
+    # Combine all cluster messages into a single alert
+    final_alert = "\n\n".join(alert_messages)
 
     try:
-        sns.publish(TopicArn=topic_arn, Message=message, Subject="🔥 Wildfire Alert - Multiple Fires")
-        print(f"✅ Sent alert to {email} with {len(fires)} fires.")
+        sns.publish(TopicArn=topic_arn, Message=final_alert, Subject="🔥 Wildfire Alert")
+        print(f"Sent alert to {email} with {len(clusters)} clusters.")
     except Exception as e:
-        print(f"❌ Failed to send alert to {email}: {str(e)}")
+        print(f"Failed to send alert to {email}: {str(e)}")

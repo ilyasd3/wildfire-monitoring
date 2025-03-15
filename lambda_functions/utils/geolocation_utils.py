@@ -2,7 +2,8 @@ import requests
 from utils.ssm_utils import get_opencage_api_key
 
 def get_coordinates(zip_code):
-    """Get lat/lon for a zip code using OpenCage API."""
+    """Get latitude/longitude for a zip code using OpenCage API."""
+
     try:
         api_key = get_opencage_api_key()
         url = f"https://api.opencagedata.com/geocode/v1/json?q={zip_code}&key={api_key}"

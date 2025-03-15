@@ -2,15 +2,13 @@ import os
 import boto3
 from datetime import datetime
 
-# Initialize DynamoDB
 dynamodb = boto3.resource('dynamodb')
 DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']
 subscription_table = dynamodb.Table(DYNAMODB_TABLE_NAME)
 
 def save_subscription(email, zip_code, topic_arn):
-    """
-    Save user subscription details to DynamoDB.
-    """
+    """Save user subscription details to DynamoDB."""
+
     try:
         subscription_table.put_item(
             Item={
@@ -26,9 +24,8 @@ def save_subscription(email, zip_code, topic_arn):
         raise
 
 def get_subscriptions():
-    """
-    Retrieve all active subscriptions from DynamoDB.
-    """
+    """Retrieve all active subscriptions from DynamoDB."""
+
     try:
         response = subscription_table.scan()
         return response.get('Items', [])
