@@ -40,17 +40,22 @@
       command: >
         bash -c "cd {{ lambda_folder }}/user_onboarding_function && zip -r {{ user_onboarding_zip }} lambda_function.py ../utils -x '**/__pycache__/*'"
 
-    # ✅ Verify ZIP file exists before deployment
-    - name: Fail if ZIP file is missing
+    # Verify both ZIP files exist before deployment
+    - name: Fail if any ZIP file is missing
       stat:
-        path: "{{ daily_monitoring_zip }}"
-      register: daily_zip_check
+        path: "{{ item }}"
+      register: zip_check
+      loop:
+        - "{{ daily_monitoring_zip }}"
+        - "{{ user_onboarding_zip }}"
 
-    - name: Fail if ZIP file does not exist
+    - name: Ensure all required ZIP files exist
       fail:
-        msg: "ZIP file for WildfireMonitoringFunction is missing!"
-      when: not daily_zip_check.stat.exists
+        msg: "One or more required ZIP files are missing!"
+      when: item.stat.exists == false
+      loop: "{{ zip_check.results }}"
 
+    # Deploy updated Lambda functions
     - name: Update WildfireMonitoringFunction in AWS Lambda
       command: >
         aws lambda update-function-code 
