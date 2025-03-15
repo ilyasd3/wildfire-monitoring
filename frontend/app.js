@@ -26,7 +26,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', async fun
         const data = await response.json();
         console.log('Success:', data);
 
-        subscribeButton.textContent = 'Subscribed ✓';
+        subscribeButton.textContent = 'Subscribed ✔';
         subscribeButton.classList.add('subscribed');
         resetButton.style.display = 'block';
 
@@ -41,7 +41,7 @@ document.getElementById('subscriptionForm').addEventListener('submit', async fun
     }
 });
 
-// Resets the form
+// Resets the form if clicked
 document.getElementById('resetButton').addEventListener('click', function() {
     const form = document.getElementById('subscriptionForm');
     const subscribeButton = document.querySelector('button[type="submit"]');
