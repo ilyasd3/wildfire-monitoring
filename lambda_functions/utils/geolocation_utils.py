@@ -1,5 +1,5 @@
 import requests
-from utils.ssm_utils import get_opencage_api_key
+from lambda_functions.utils.ssm_utils import get_opencage_api_key
 
 def get_coordinates(zip_code):
     """Get latitude/longitude for a zip code using OpenCage API."""
