@@ -4,4 +4,6 @@
 # Ignore Lambda deployment artifacts
 artifacts/*.zip
 
-
+# Ignore Python cache files
+__pycache__/
+*.pyc
