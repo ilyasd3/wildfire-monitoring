@@ -4,8 +4,8 @@ import pandas as pd
 import datetime
 from io import StringIO
 import boto3
-from utils.ssm_utils import get_nasa_api_key
-from utils.sns_utils import send_clustered_alert
+from lambda_functions.utils.ssm_utils import get_nasa_api_key
+from lambda_functions.utils.sns_utils import send_clustered_alert
 
 s3 = boto3.client('s3')
 
