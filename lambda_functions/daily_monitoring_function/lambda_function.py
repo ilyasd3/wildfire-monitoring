@@ -1,9 +1,9 @@
 import os
 import json
 import logging
-from utils.geolocation_utils import get_coordinates
-from utils.wildfire_utils import process_fires
-from utils.dynamodb_utils import get_subscriptions
+from lambda_functions.utils.geolocation_utils import get_coordinates
+from lambda_functions.utils.wildfire_utils import process_fires
+from lambda_functions.utils.dynamodb_utils import get_subscriptions
 
 # Set up logging
 logger = logging.getLogger()

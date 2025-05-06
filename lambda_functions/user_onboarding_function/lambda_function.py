@@ -1,8 +1,8 @@
 import os
 import json
 import logging
-from utils.dynamodb_utils import save_subscription
-from utils.sns_utils import get_or_create_sns_topic, subscribe_user_to_topic
+from lambda_functions.utils.dynamodb_utils import save_subscription
+from lambda_functions.utils.sns_utils import get_or_create_sns_topic, subscribe_user_to_topic
 
 # Set up logging
 logger = logging.getLogger()
