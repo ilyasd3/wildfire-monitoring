@@ -35,8 +35,17 @@ class TestGetOrCreateSNSTopic:
     def test_returns_existing_topic(self, mock_sns_client):
         zip_code = "90210"
         existing_arn = f"arn:aws:sns:us-east-1:123456789012:wildfire-alerts-{zip_code}"
-        mock_sns_client.list_topics.return_value = {"Topics": [{"TopicArn": existing_arn}]}
+
+        # Simulate SNS returning the topic in list_topics
+        mock_sns_client.list_topics.return_value = {
+            "Topics": [{"TopicArn": existing_arn}]
+        }
+
+        # Patch create_topic in case it's wrongly called
+        mock_sns_client.create_topic.return_value = {"TopicArn": "should_not_be_called"}
+
         result = get_or_create_sns_topic(zip_code)
+
         assert result == existing_arn
         mock_sns_client.create_topic.assert_not_called()
 
@@ -46,7 +55,9 @@ class TestGetOrCreateSNSTopic:
         new_arn = f"arn:aws:sns:us-east-1:123456789012:wildfire-alerts-{zip_code}"
         mock_sns_client.list_topics.return_value = {"Topics": []}
         mock_sns_client.create_topic.return_value = {"TopicArn": new_arn}
+
         result = get_or_create_sns_topic(zip_code)
+
         assert result == new_arn
         mock_sns_client.create_topic.assert_called_once_with(Name=f"wildfire-alerts-{zip_code}")
 
