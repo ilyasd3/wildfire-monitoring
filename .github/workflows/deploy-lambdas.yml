@@ -1,0 +1,54 @@
+name: Deploy Lambda Functions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Lambdas
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Zip and deploy UserOnboardingFunction
+        run: |
+          mkdir -p build/user_onboarding
+          cp lambda_functions/user_onboarding_function/lambda_function.py build/user_onboarding/
+          cp -r lambda_functions/utils build/user_onboarding/
+          cd build/user_onboarding
+          zip -r function.zip .
+          aws lambda update-function-code \
+            --function-name ${{ secrets.USER_ONBOARDING_FUNCTION_NAME }} \
+            --zip-file fileb://function.zip \
+            --region ${{ secrets.AWS_REGION }}
+
+      - name: Zip and deploy WildfireMonitoringFunction
+        run: |
+          cd $GITHUB_WORKSPACE
+          mkdir -p build/wildfire_monitoring
+          cp lambda_functions/daily_monitoring_function/lambda_function.py build/wildfire_monitoring/
+          cp -r lambda_functions/utils build/wildfire_monitoring/
+          cd build/wildfire_monitoring
+          zip -r function.zip .
+          aws lambda update-function-code \
+            --function-name ${{ secrets.WILDFIRE_MONITORING_FUNCTION_NAME }} \
+            --zip-file fileb://function.zip \
+            --region ${{ secrets.AWS_REGION }}
+
+      - name: Cleanup
+        run: rm -rf build
