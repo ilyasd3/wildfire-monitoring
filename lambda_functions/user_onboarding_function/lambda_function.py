@@ -53,5 +53,3 @@ def lambda_handler(event, context):
                 "message": "An unexpected error occurred. Please try again later."
             })
         }
-
-#TEST
