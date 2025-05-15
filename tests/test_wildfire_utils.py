@@ -3,7 +3,7 @@ import os
 from unittest.mock import patch, MagicMock
 import pandas as pd
 
-# Ensure the repo root is in sys.path
+# Add root directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from lambda_functions.utils.wildfire_utils import process_fires
@@ -16,9 +16,7 @@ class TestProcessFires:
     @patch(f"{MODULE_PATH}.s3")
     @patch(f"{MODULE_PATH}.requests.get")
     @patch(f"{MODULE_PATH}.get_nasa_api_key")
-    def test_process_fires_sends_alert_and_saves_to_s3(
-        self, mock_get_api_key, mock_requests_get, mock_s3, mock_send_alert
-    ):
+    def test_process_fires_sends_alert_and_saves_to_s3(self, mock_get_api_key, mock_requests_get, mock_s3, mock_send_alert):
         # Arrange
         mock_get_api_key.return_value = "fake-nasa-api-key"
 
@@ -26,13 +24,14 @@ class TestProcessFires:
 34.05,-118.25,60.0,2024-05-01
 36.17,-115.14,20.0,2024-05-01
 """
+
         mock_response = MagicMock()
         mock_response.text = csv_data
         mock_response.raise_for_status = MagicMock()
         mock_requests_get.return_value = mock_response
 
-        test_email = "user@example.com"
-        zip_code = "90210"
+        test_email = "test@email.com"
+        zip_code = "12345"
         topic_arn = "arn:aws:sns:us-east-1:123456789012:test-topic"
         bucket_name = "wildfire-bucket"
         lat, lon = 34.05, -118.25
@@ -54,4 +53,4 @@ class TestProcessFires:
         mock_send_alert.assert_called_once()
         alert_args, _ = mock_send_alert.call_args
         assert isinstance(alert_args[0], pd.DataFrame)
-        assert len(alert_args[0]) == 1  # Only 1 fire meets filter
+        assert len(alert_args[0]) == 1  # Only 1 fire meets FRP filter

@@ -39,7 +39,6 @@ jobs:
 
       - name: Zip and deploy WildfireMonitoringFunction
         run: |
-          cd $GITHUB_WORKSPACE
           mkdir -p build/wildfire_monitoring
           cp lambda_functions/daily_monitoring_function/lambda_function.py build/wildfire_monitoring/
           cp -r lambda_functions/utils build/wildfire_monitoring/

@@ -1,8 +1,8 @@
 import sys
 import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-# Add project root to sys.path
+# Add root directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 @patch.dict(os.environ, {"BUCKET_NAME": "fake-bucket", "DYNAMODB_TABLE_NAME": "fake-table"})
@@ -18,8 +18,8 @@ def test_daily_monitoring_lambda_handler_success(
 
     # Arrange
     mock_get_subscriptions.return_value = [{
-        "email": "user@example.com",
-        "zip_code": "90210",
+        "email": "test@email.com",
+        "zip_code": "12345",
         "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:test-topic"
     }]
     mock_get_coordinates.return_value = (34.05, -118.25)
@@ -36,5 +36,5 @@ def test_daily_monitoring_lambda_handler_success(
     assert response["statusCode"] == 200
     assert "Daily check completed" in response["body"]
     mock_get_subscriptions.assert_called_once()
-    mock_get_coordinates.assert_called_once_with("90210")
+    mock_get_coordinates.assert_called_once_with("12345")
     mock_process_fires.assert_called_once()

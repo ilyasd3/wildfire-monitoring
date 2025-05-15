@@ -4,6 +4,7 @@ from datetime import datetime
 from unittest.mock import patch, MagicMock
 import pandas as pd
 
+# Add root directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from lambda_functions.utils.sns_utils import (
@@ -15,14 +16,18 @@ from lambda_functions.utils.sns_utils import (
 class TestSubscribeUserToTopic:
     @patch("boto3.client")
     def test_successful_subscription(self, mock_boto_client):
+        # Arrange
         mock_sns = MagicMock()
         mock_boto_client.return_value = mock_sns
         mock_sns.subscribe.return_value = {"SubscriptionArn": "fake-arn"}
 
-        email = "user@example.com"
+        email = "test@email.com"
         topic_arn = "arn:aws:sns:us-east-1:123456789012:test-topic"
+
+        # Act
         result = subscribe_user_to_topic(email, topic_arn)
 
+        # Assert
         mock_sns.subscribe.assert_called_once_with(
             TopicArn=topic_arn,
             Protocol="email",
@@ -33,7 +38,7 @@ class TestSubscribeUserToTopic:
 class TestGetOrCreateSNSTopic:
     @patch("boto3.client")
     def test_returns_existing_topic(self, mock_boto_client):
-        zip_code = "90210"
+        zip_code = "12345"
         existing_arn = f"arn:aws:sns:us-east-1:123456789012:wildfire-alerts-{zip_code}"
         
         mock_sns = MagicMock()
@@ -65,6 +70,7 @@ class TestGetOrCreateSNSTopic:
 class TestSendClusteredAlert:
     @patch("boto3.client")
     def test_publish_called_with_clusters(self, mock_boto_client):
+        # Arrange
         mock_sns = MagicMock()
         mock_boto_client.return_value = mock_sns
 
@@ -75,11 +81,13 @@ class TestSendClusteredAlert:
             "acq_date": [datetime.today().strftime("%Y-%m-%d")] * 2
         })
 
-        email = "user@example.com"
-        topic_arn = "arn:aws:sns:us-east-1:123456789012:zip-90210"
+        email = "test@email.com"
+        topic_arn = "arn:aws:sns:us-east-1:123456789012:zip-12345"
 
+        # Act
         send_clustered_alert(df, email, topic_arn)
 
+        # Assert
         mock_sns.publish.assert_called_once()
         args, kwargs = mock_sns.publish.call_args
         assert kwargs["TopicArn"] == topic_arn
@@ -91,6 +99,6 @@ class TestSendClusteredAlert:
         mock_boto_client.return_value = mock_sns
 
         df = pd.DataFrame()
-        send_clustered_alert(df, "user@example.com", "arn:aws:sns:us-east-1:123456789012:test")
+        send_clustered_alert(df, "test@email.com", "arn:aws:sns:us-east-1:123456789012:test")
 
         mock_sns.publish.assert_not_called()

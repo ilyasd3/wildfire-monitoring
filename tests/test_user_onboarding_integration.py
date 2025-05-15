@@ -1,8 +1,9 @@
 import sys
 import os
-from unittest.mock import patch, MagicMock
+import json
+from unittest.mock import patch
 
-# Add project root to path
+# Add root directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 @patch.dict(os.environ, {"DYNAMODB_TABLE_NAME": "fake-table-name"})
@@ -15,7 +16,7 @@ def test_user_onboarding_lambda_handler_success(mock_get_topic, mock_save_sub, m
     # Arrange
     mock_get_topic.return_value = "arn:aws:sns:us-east-1:123456789012:test-topic"
     event = {
-        "body": '{"email": "user@example.com", "zip_code": "90210"}'
+        "body": '{"email": "test@email.com", "zip_code": "12345"}'
     }
     context = {}
 
@@ -24,11 +25,11 @@ def test_user_onboarding_lambda_handler_success(mock_get_topic, mock_save_sub, m
 
     # Assert
     assert response["statusCode"] == 200
-    body = eval(response["body"])  # or json.loads
+    body = json.loads(response["body"])
     assert body["message"] == "Subscription successful!"
-    assert body["email"] == "user@example.com"
-    assert body["zip_code"] == "90210"
+    assert body["email"] == "test@email.com"
+    assert body["zip_code"] == "12345"
 
-    mock_get_topic.assert_called_once_with("90210")
+    mock_get_topic.assert_called_once_with("12345")
     mock_save_sub.assert_called_once()
     mock_subscribe.assert_called_once()
