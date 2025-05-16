@@ -17,40 +17,43 @@ class TestProcessFires:
     @patch(f"{MODULE_PATH}.requests.get")
     @patch(f"{MODULE_PATH}.get_nasa_api_key")
     def test_process_fires_sends_alert_and_saves_to_s3(self, mock_get_api_key, mock_requests_get, mock_s3, mock_send_alert):
-        # Arrange
+        # Mock the NASA API key retrieval
         mock_get_api_key.return_value = "fake-nasa-api-key"
 
+        # Create mock CSV wildfire data with two entries, only one with high FRP
         csv_data = """latitude,longitude,frp,acq_date
 34.05,-118.25,60.0,2024-05-01
 36.17,-115.14,20.0,2024-05-01
 """
 
+        # Simulate a successful API response with CSV wildfire data
         mock_response = MagicMock()
         mock_response.text = csv_data
         mock_response.raise_for_status = MagicMock()
         mock_requests_get.return_value = mock_response
 
+        # Define test input parameters
         test_email = "test@email.com"
         zip_code = "12345"
         topic_arn = "arn:aws:sns:us-east-1:123456789012:test-topic"
         bucket_name = "wildfire-bucket"
         lat, lon = 34.05, -118.25
 
-        # Act
+        # Call the function to process the wildfire data
         process_fires(lat, lon, test_email, zip_code, topic_arn, bucket_name)
 
-        # Assert: NASA API called
+        # Check that the NASA API was called
         mock_requests_get.assert_called_once()
 
-        # Assert: Data saved to S3
+        # Verify that the filtered data was saved to S3
         mock_s3.put_object.assert_called_once()
         args, kwargs = mock_s3.put_object.call_args
         assert kwargs["Bucket"] == bucket_name
         assert kwargs["Key"].startswith(f"{test_email}/{zip_code}/wildfire_data_")
         assert "latitude" in kwargs["Body"]
 
-        # Assert: Alert sent
+        # Confirm that an alert was sent with the filtered fire data
         mock_send_alert.assert_called_once()
         alert_args, _ = mock_send_alert.call_args
         assert isinstance(alert_args[0], pd.DataFrame)
-        assert len(alert_args[0]) == 1  # Only 1 fire meets FRP filter
+        assert len(alert_args[0]) == 1  # Only the high FRP fire should be included
